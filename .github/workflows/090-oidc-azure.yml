@@ -50,5 +50,4 @@
             DATABRICKS_HOST: https://adb-7405614044593132.12.azuredatabricks.net # Your Workspace URL
           run: |
             # The CLI will automatically use the DATABRICKS_TOKEN env var set above
-            databricks workspace list
-            databricks clusters list
+            databricks secrets list-scopes
