@@ -29,3 +29,22 @@
           run: |
             az account show
             az group list
+
+        - name: Get Databricks Token
+          id: get_token
+          run: |
+            # Get an Azure AD token for the Databricks resource
+            token=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d --query accessToken -o tsv)
+            
+            # Export it as a masked env var for subsequent steps
+            echo "::add-mask::$token"
+            echo "DATABRICKS_TOKEN=$token" >> $GITHUB_ENV
+
+        # 3. Run Databricks Commands
+        - name: Run Databricks CLI
+          env:
+            DATABRICKS_HOST: https://adb-123456789.12.azuredatabricks.net # Your Workspace URL
+          run: |
+            # The CLI will automatically use the DATABRICKS_TOKEN env var set above
+            databricks workspace list
+            databricks clusters list
