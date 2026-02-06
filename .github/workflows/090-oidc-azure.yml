@@ -39,8 +39,12 @@
             # Export it as a masked env var for subsequent steps
             echo "::add-mask::$token"
             echo "DATABRICKS_TOKEN=$token" >> $GITHUB_ENV
+        # install databricks cli
 
-        # 3. Run Databricks Commands
+        - name: Install Databricks CLI
+          uses: databricks/setup-cli@main
+
+        # 4. Run Databricks Commands
         - name: Run Databricks CLI
           env:
             DATABRICKS_HOST: https://adb-7405614044593132.12.azuredatabricks.net # Your Workspace URL
