@@ -1,0 +1,39 @@
+jobs:
+  deploy-bundle:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # 1. Install Databricks CLI (Required for Bundles)
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      # 2. Azure Login (OIDC)
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 3. Generate the Databricks Token
+      - name: Get Databricks Token
+        id: get_token
+        run: |
+          token=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d --query accessToken -o tsv)
+          echo "::add-mask::$token"
+          echo "DATABRICKS_TOKEN=$token" >> $GITHUB_ENV
+
+      # 4. Deploy the Bundle
+      # DABs will automatically pick up DATABRICKS_TOKEN and HOST from env vars
+      - name: Deploy Bundle
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        run: |
+          databricks bundle validate
+          databricks bundle deploy --target prod
