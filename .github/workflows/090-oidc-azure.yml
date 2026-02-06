@@ -43,7 +43,7 @@
         # 3. Run Databricks Commands
         - name: Run Databricks CLI
           env:
-            DATABRICKS_HOST: https://adb-123456789.12.azuredatabricks.net # Your Workspace URL
+            DATABRICKS_HOST: https://adb-7405614044593132.12.azuredatabricks.net # Your Workspace URL
           run: |
             # The CLI will automatically use the DATABRICKS_TOKEN env var set above
             databricks workspace list
